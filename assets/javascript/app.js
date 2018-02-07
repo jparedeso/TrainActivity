@@ -4,7 +4,9 @@ var TrainActivity = function() {
     var destination = "";
     var firstTrainTime = "";
     var frequency = "";
-    var newData;
+    var newTrainData;
+    var nextTrainArrival;
+    var minutesAway;
 
        // Initialize Firebase
     var config = {
@@ -22,7 +24,7 @@ var TrainActivity = function() {
     function init() {
         // login();
         initEventHandlers();
-        addTrainToHTML()        
+        addTrainToHTML();        
     }
 
     function initEventHandlers() {
@@ -41,7 +43,7 @@ var TrainActivity = function() {
             trainName: trainName,
             destination: destination,
             firstTrainTime: firstTrainTime,
-            frequency: frequency
+            frequency: frequency,
         });
         $(".myInput").val("");
     }
@@ -49,12 +51,26 @@ var TrainActivity = function() {
     function addTrainToHTML() {
         database.ref().on("child_added", function(childSnapshot) {
             newTrainData = childSnapshot.val();
+            nextArrival();
             $("#trainInfoTable").append(`
                 <tr>
                     <td>${newTrainData.trainName}</td>
+                    <td>${newTrainData.destination}</td>
+                    <td>${newTrainData.frequency}</td>
+                    <td>${nextTrainArrival}</td>
+                    <td>${minutesAway}</td>
                 <tr>
             `);
         });
+    }
+
+    function nextArrival() {
+        firstTrainTime = newTrainData.firstTrainTime;
+        frequency = newTrainData.frequency;
+        var firstTrainTimeConverted = moment(firstTrainTime, "HH:mm").subtract(1, "years");
+        var timeApart = (moment().diff(moment(firstTrainTimeConverted), "minutes")) % frequency;
+        minutesAway = frequency - timeApart;
+        nextTrainArrival = moment(moment().add(minutesAway, "minutes")).format("hh:mm A");
     }
 
     return {
@@ -65,51 +81,3 @@ var TrainActivity = function() {
 $(function() {
     TrainActivity.init();
 });
-
-
-
-
-
-
-
-
-
-    // function login() {
-    //      // Initialize Firebase
-    //   var config = {
-    //     apiKey: "AIzaSyAp6lBndBnWQIXB1uoGZEpJISR3YPKK8pM",
-    //     authDomain: "trainactivity-d3485.firebaseapp.com",
-    //     databaseURL: "https://trainactivity-d3485.firebaseio.com",
-    //     projectId: "trainactivity-d3485",
-    //     storageBucket: "",
-    //     messagingSenderId: "347867649628"
-    //   };
-    //   firebase.initializeApp(config);
-
-    // database = firebase.database();
-    //     // FirebaseUI config.
-    // var uiConfig = {
-    //     signInSuccessUrl: 'home.html',
-    //     signInOptions: [
-    //         {
-    //             provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID
-    //         },
-    //         {
-    //             provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-    //             requireDisplayName: true
-    //         }
-    //     ]
-    // };
-
-    // // Initialize the FirebaseUI Widget using Firebase.
-    // var ui = new firebaseui.auth.AuthUI(firebase.auth());
-    // // The start method will wait until the DOM is loaded.
-    // ui.start('#firebaseui-auth-container', uiConfig);
-
-    // firebase.auth().onAuthStateChanged(function(user) {
-    //     if (user) {
-    //     }
-    // }, function(error) {
-    //     console.log(error);
-    // });
-    // }
