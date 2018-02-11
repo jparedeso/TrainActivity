@@ -7,6 +7,7 @@ var TrainActivity = function() {
     var newTrainData;
     var nextTrainArrival;
     var minutesAway;
+    var myInterval;
 
        // Initialize Firebase
     var config = {
@@ -24,11 +25,15 @@ var TrainActivity = function() {
     function init() {
         // login();
         initEventHandlers();
-        addTrainToHTML();        
+        addTrainToHTML();
+        $("#updateButton").on("click", updateTrainInfo);
+        timer();
+        
     }
 
     function initEventHandlers() {
         $("#submitButton").on("click", function(event) {
+            event.stopPropagation();
             trainName = $("#trainName").val().trim();
             destination = $("#destination").val().trim();
             firstTrainTime = $("#firstTrainTime").val().trim();
@@ -61,7 +66,7 @@ var TrainActivity = function() {
                     <td>${minutesAway}</td>
                 <tr>
             `);
-        });
+        });        
     }
 
     function nextArrival() {
@@ -73,11 +78,22 @@ var TrainActivity = function() {
         nextTrainArrival = moment(moment().add(minutesAway, "minutes")).format("hh:mm A");
     }
 
+    function updateTrainInfo() {
+        $("#trainInfoTable").html("");
+        addTrainToHTML();        
+    }
+
+    function timer() {
+        var myInterval = setInterval(function() {
+        $("#updateButton").on("click", updateTrainInfo);
+        }, 1000);
+    }
+
     return {
         init: init
     };
 }();
 
 $(function() {
-    TrainActivity.init();
+    TrainActivity.init();    
 });
