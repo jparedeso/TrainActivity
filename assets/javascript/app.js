@@ -27,9 +27,10 @@ var TrainActivity = function() {
         initEventHandlers();
         addTrainToHTML();
         $("#updateButton").on("click", updateTrainInfo);
-        timer();
+        var myVar = setInterval(updateTrainInfo, 1000);
         
     }
+
 
     function initEventHandlers() {
         $("#submitButton").on("click", function(event) {
@@ -81,12 +82,6 @@ var TrainActivity = function() {
     function updateTrainInfo() {
         $("#trainInfoTable").html("");
         addTrainToHTML();        
-    }
-
-    function timer() {
-        var myInterval = setInterval(function() {
-        $("#updateButton").on("click", updateTrainInfo);
-        }, 1000);
     }
 
     return {
