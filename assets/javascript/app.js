@@ -26,9 +26,7 @@ var TrainActivity = function() {
         // login();
         initEventHandlers();
         addTrainToHTML();
-        $("#updateButton").on("click", updateTrainInfo);
-        var myVar = setInterval(updateTrainInfo, 1000);
-        
+        var updateTI = setInterval(updateTrainInfo, 100);
     }
 
 
@@ -39,7 +37,6 @@ var TrainActivity = function() {
             destination = $("#destination").val().trim();
             firstTrainTime = $("#firstTrainTime").val().trim();
             frequency = $("#frequency").val().trim();
-
             pushDataToDatabase();
         });
     }
@@ -79,7 +76,7 @@ var TrainActivity = function() {
         nextTrainArrival = moment(moment().add(minutesAway, "minutes")).format("hh:mm A");
     }
 
-    function updateTrainInfo() {
+    function updateTrainInfo() {        
         $("#trainInfoTable").html("");
         addTrainToHTML();        
     }
